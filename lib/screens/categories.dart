@@ -11,14 +11,14 @@ class CategoriesScreen extends StatefulWidget {
     required this.availableMeals,
   });
 
-
   final List<Meal> availableMeals;
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
-class _CategoriesScreenState extends State<CategoriesScreen> with SingleTickerProviderStateMixin {
+class _CategoriesScreenState extends State<CategoriesScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
 
   @override
@@ -31,6 +31,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> with SingleTickerPr
       lowerBound: 0, //default
       upperBound: 1, //default
     );
+
+    _animationController.forward();
   }
 
   @override
@@ -56,21 +58,26 @@ class _CategoriesScreenState extends State<CategoriesScreen> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return GridView(
-      padding: const EdgeInsets.all(28),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 2.5 / 1.5,
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20),
-      children: [
-        for (final category in availableCategories)
-          CategoryGridItem(
+    return AnimatedBuilder(
+      animation: _animationController,
+      child: GridView(
+        padding: const EdgeInsets.all(28),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2.5 / 1.5,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20),
+        children: [
+          for (final category in availableCategories)
+            CategoryGridItem(
               category: category,
               onSelectCategory: () {
                 _selectCategory(context, category);
-              }),
-      ],
+              },
+            ),
+        ],
+      ),
+      builder: (context, child) => Padding(padding: EdgeInsets.only(top: 100 - _animationController.value * 100), child: child),
     );
   }
 }
