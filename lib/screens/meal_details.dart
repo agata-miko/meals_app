@@ -21,23 +21,46 @@ class MealDetailsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(meal.title),
         actions: [
-          IconButton(onPressed: () {
-            final wasAdded = ref.read(favoriteMealsProvider.notifier).toggleMealFavoriteStatus(meal);
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(wasAdded ? 'Meal added to favorites!' : 'Meal removed from favorites.'),
-            ));
-          }, icon: Icon(isFavorite ? Icons.star : Icons.star_border),),
+          IconButton(
+            onPressed: () {
+              final wasAdded = ref
+                  .read(favoriteMealsProvider.notifier)
+                  .toggleMealFavoriteStatus(meal);
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(wasAdded
+                    ? 'Meal added to favorites!'
+                    : 'Meal removed from favorites.'),
+              ));
+            },
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              transitionBuilder: (child, animation) {
+                return RotationTransition(
+                    turns: Tween<double>(
+                      begin: 0.8,
+                      end: 1,
+                    ).animate(animation),
+                    child: child);
+              },
+              child: Icon(
+                isFavorite ? Icons.star : Icons.star_border,
+                key: ValueKey(isFavorite),
+              ),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.network(
-              meal.imageUrl,
-              width: double.infinity,
-              height: 300,
-              fit: BoxFit.cover,
+            Hero(tag: meal.id,
+              child: Image.network(
+                meal.imageUrl,
+                width: double.infinity,
+                height: 300,
+                fit: BoxFit.cover,
+              ),
             ),
             const SizedBox(
               height: 14,
